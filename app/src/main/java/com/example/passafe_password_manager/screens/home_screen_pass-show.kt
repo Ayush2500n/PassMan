@@ -37,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -51,6 +52,7 @@ import com.example.passafe_password_manager.constants.secretKey
 import com.example.passafe_password_manager.convertToStars
 import com.example.passafe_password_manager.data.local.passData
 import com.example.passafe_password_manager.decrypt
+import com.example.passafe_password_manager.encrypt
 import com.example.passafe_password_manager.viewmodel.passViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -66,7 +68,7 @@ fun pass_show(
     viewModel: passViewModel,
     mainActivity: MainActivity
 ) {
-    var secondClick by remember {
+    var Click by remember {
         mutableStateOf(false)
     }
     var isAuthenticated by remember {
@@ -139,10 +141,15 @@ fun pass_show(
             }
             Text(text = "Password", modifier = Modifier.padding(top = 20.dp, start = 20.dp, bottom = 5.dp), color = Color.LightGray)
             if (editState){
-                TextField(value = convertToStars(decrypt(newPassword, secretKey)), onValueChange = {newPassword = it},  singleLine = true, colors = TextFieldDefaults.textFieldColors(containerColor = Color.White, focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent, focusedTextColor = Color.Black, unfocusedTextColor = Color.Gray), modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp)
-                    .border(width = 1.dp, color = Color.LightGray, shape = RoundedCornerShape(4.dp)))
+                TextField(value = convertToStars(decrypt(newPassword, secretKey)), onValueChange = { newPassword = encrypt(it, secretKey) },
+                    singleLine = true, colors = TextFieldDefaults.textFieldColors(containerColor = Color.White, focusedIndicatorColor = Color.Transparent, unfocusedIndicatorColor = Color.Transparent, focusedTextColor = Color.Black, unfocusedTextColor = Color.Gray), modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp)
+                        .border(
+                            width = 1.dp,
+                            color = Color.LightGray,
+                            shape = RoundedCornerShape(4.dp)
+                        ))
             }else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(
